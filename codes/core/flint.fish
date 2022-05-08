@@ -10,6 +10,6 @@ function flint
         logger 2 "Main thread ready to go, logicpipe loaded"
     end
     logger 0 "+ Main thread started"
-    socat tcp-listen:$port,bind=$ip,reuseaddr,pktinfo,fork,end-close EXEC:"fish $webroot/logicpipe.fish $ip $port $index $webroot $logcat" 
+    socat tcp-listen:$port,bind=$ip,reuseaddr,fork,end-close EXEC:"fish $webroot/logicpipe.fish $ip $port $index $webroot $logcat" 
     logger 0 " - Main thread stopped"
 end

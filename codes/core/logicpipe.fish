@@ -6,23 +6,32 @@ function logicpipe
     set webroot $argv[4]
     set logcat $argv[5]
     set request_path (echo $request | awk -F'[ ]' '{print $2}')
+    set 200_head "HTTP/1.1 200 OK
+Content-Type: text/plain; charset=UTF-8\r\n"
+    set 403_head "HTTP/1.1 403 Forbidden\r\n"
+    set 404_head "HTTP/1.1 404 Not Found\r\n"
     if test -e $webroot$request_path
         if test "$request_path" = /
             set request_path "/$index"
         end
-        if head -n2 $webroot$request_path | grep -qs '#!/'
-            fish $webroot$request_path
+        if test "$request_path" = /logicpipe.fish
+            echo -e $403_head
+            if test -e "$webroot"404.fish
+                fish "$webroot"403.fish
+            end
         else
-            echo -e "HTTP/1.1 200 OK\n\n $(cat $webroot$request_path)"
+            if head -n2 $webroot$request_path | grep -qs '#!/'
+                echo -e $200_head
+                fish $webroot$request_path
+            else
+                echo -e $200_head
+                cat $webroot$request_path
+            end
         end
     else
-        echo -e "HTTP/1.1 404\n
-<html><head>
-<title>404 Not Found</title>
-</head><body>
-<h1>NMSL</h1>
-<p>The requested URL $request_path was not found on this server.</p>
-<p>DarkWater API server Quicksand@build2</p>
-</body></html>"
+        echo -e $404_head
+        if test -e "$webroot"404.fish
+            fish "$webroot"404.fish
+        end
     end
 end
