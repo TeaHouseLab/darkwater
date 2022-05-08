@@ -1,0 +1,22 @@
+function help_echo
+ echo '
+(./)app [s/serve, v/version]
+
+    s/serve: Start serving webpage
+
+    v/version: Show version
+
+Args
+(./)app [-li/--ip, -lp/--port, -i/--index, -d/--webroot, -l/--logcat]
+
+    -li/--ip: Specify the ip to listen
+
+    -lp/--port: Specify the port to listen
+
+    -i/--index: Specify index file, by default it`s index.fish
+
+    -d/--webroot: Specify web root directory, by default it`s /var/www/fish
+
+    -l/--logcat: Specify log level, available{info, debug}
+'
+end

@@ -1,0 +1,3 @@
+function logicpipe
+    cat 
+end
