@@ -7,13 +7,13 @@ function help_echo
     v/version: Show version
 
 Args
-(./)app [-li/--ip, -lp/--port, -i/--index, -d/--webroot, -l/--logcat]
+(./)app [-i/--ip, -p/--port, -m/--index, -d/--webroot, -l/--logcat]
 
-    -li/--ip: Specify the ip to listen
+    -i/--ip: Specify the ip to listen
 
-    -lp/--port: Specify the port to listen
+    -p/--port: Specify the port to listen
 
-    -i/--index: Specify index file, by default it`s index.fish
+    -m/--index: Specify index file, by default it`s index.fish
 
     -d/--webroot: Specify web root directory, by default it`s /var/www/fish
 
