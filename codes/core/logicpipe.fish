@@ -16,22 +16,29 @@ Content-Type: text/plain; charset=UTF-8\r\n"
         end
         if test "$request_path" = /logicpipe.fish
             echo -e $403_head
-            if test -e "$webroot"404.fish
-                fish "$webroot"403.fish
+            if test -e $webroot/403.fish
+                fish $webroot/403.fish
             end
         else
-            if head -n2 $webroot$request_path | grep -qs '#!/'
-                echo -e $200_head
-                fish $webroot$request_path
+            if [ -r $webroot$request_path ]
+                if head -n2 $webroot$request_path | grep -qs '#!/'
+                    echo -e $200_head
+                    fish $webroot$request_path
+                else
+                    echo -e $200_head
+                    cat $webroot$request_path
+                end
             else
-                echo -e $200_head
-                cat $webroot$request_path
+                echo -e $403_head
+                if test -e $webroot/403.fish
+                    fish $webroot/403.fish
+                end
             end
         end
     else
         echo -e $404_head
-        if test -e "$webroot"404.fish
-            fish "$webroot"404.fish
+        if test -e $webroot/404.fish
+            fish $webroot/404.fish
         end
     end
 end

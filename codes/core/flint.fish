@@ -4,8 +4,8 @@ function flint
     else
         mkdir -p $webroot
     end
-    sed -n '/^function logicpipe/,/^end/p' $path | sed '1d; $d' | tee $webroot/logicpipe.fish &>/dev/null
-    chmod +x $webroot/logicpipe.fish
+    sed -n '/^function logicpipe/,/^end/p' $path | sed '1d; $d' | sudo tee $webroot/logicpipe.fish &>/dev/null
+    sudo chmod +x $webroot/logicpipe.fish
     if test "$logcat" = "debug"
         logger 2 "Main thread ready to go, logicpipe loaded"
     end

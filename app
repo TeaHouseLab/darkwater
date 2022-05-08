@@ -175,22 +175,29 @@ Content-Type: text/plain; charset=UTF-8\r\n"
         end
         if test "$request_path" = /logicpipe.fish
             echo -e $403_head
-            if test -e "$webroot"404.fish
-                fish "$webroot"403.fish
+            if test -e $webroot/403.fish
+                fish $webroot/403.fish
             end
         else
-            if head -n2 $webroot$request_path | grep -qs '#!/'
-                echo -e $200_head
-                fish $webroot$request_path
+            if [ -r $webroot$request_path ]
+                if head -n2 $webroot$request_path | grep -qs '#!/'
+                    echo -e $200_head
+                    fish $webroot$request_path
+                else
+                    echo -e $200_head
+                    cat $webroot$request_path
+                end
             else
-                echo -e $200_head
-                cat $webroot$request_path
+                echo -e $403_head
+                if test -e $webroot/403.fish
+                    fish $webroot/403.fish
+                end
             end
         end
     else
         echo -e $404_head
-        if test -e "$webroot"404.fish
-            fish "$webroot"404.fish
+        if test -e $webroot/404.fish
+            fish $webroot/404.fish
         end
     end
 end
@@ -201,8 +208,8 @@ function flint
     else
         mkdir -p $webroot
     end
-    sed -n '/^function logicpipe/,/^end/p' $path | sed '1d; $d' | tee $webroot/logicpipe.fish &>/dev/null
-    chmod +x $webroot/logicpipe.fish
+    sed -n '/^function logicpipe/,/^end/p' $path | sed '1d; $d' | sudo tee $webroot/logicpipe.fish &>/dev/null
+    sudo chmod +x $webroot/logicpipe.fish
     if test "$logcat" = "debug"
         logger 2 "Main thread ready to go, logicpipe loaded"
     end
@@ -211,14 +218,14 @@ function flint
     logger 0 " - Main thread stopped"
 end
 
-echo Build_Time_UTC=2022-05-08_08:36:37
+echo Build_Time_UTC=2022-05-08_09:22:39
 set -lx prefix [darkwater]
 set -lx ip 0.0.0.0
 set -lx port 80
 set -lx index "index.fish"
 set -lx webroot /var/www/fish
 set -lx logcat info
-set -lx path (echo -e "$(pwd)/$(status --current-filename)")
+set -lx path (status --current-filename)
 set -lx config "/etc/centerlinux/conf.d/darkwater.conf"
 checkdependence curl socat sudo
 ctconfig_init

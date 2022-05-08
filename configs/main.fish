@@ -4,7 +4,7 @@ set -lx port 80
 set -lx index "index.fish"
 set -lx webroot /var/www/fish
 set -lx logcat info
-set -lx path (echo -e "$(pwd)/$(status --current-filename)")
+set -lx path (status --current-filename)
 set -lx config "/etc/centerlinux/conf.d/darkwater.conf"
 checkdependence curl socat sudo
 ctconfig_init
