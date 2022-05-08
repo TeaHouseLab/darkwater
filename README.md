@@ -20,10 +20,16 @@ file turn-off-the-light must have a #! to indicate that "Hey im a script plz exe
 
 ## Okay, so how can i run this stuff?
 
-easy!
+Strongly suggest to install this with ctpkg (ruzhtw.top)
+
+```
+ctpkg grab darkwater
+```
+
+or
 
 Just grab the app file and
 
-./app s <- which means serve btw, it will start generate configure files and webroot
+./app(or darkwater) s <- which means serve btw, it will start generating configure files and webroot
 
 (by default it's /etc/centerlinux/conf.d/darkwater and /var/www/darkwater)
