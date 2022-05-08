@@ -166,7 +166,7 @@ function logicpipe
     set logcat $argv[5]
     set request_path (echo $request | awk -F'[ ]' '{print $2}')
     set 200_head "HTTP/1.1 200 OK
-Content-Type: text/plain; charset=UTF-8\r\n"
+Content-Type:*/*; charset=UTF-8\r\n"
     set 403_head "HTTP/1.1 403 Forbidden\r\n"
     set 404_head "HTTP/1.1 404 Not Found\r\n"
     if test -e $webroot$request_path
@@ -218,7 +218,7 @@ function flint
     logger 0 " - Main thread stopped"
 end
 
-echo Build_Time_UTC=2022-05-08_09:22:39
+echo Build_Time_UTC=2022-05-08_09:38:46
 set -lx prefix [darkwater]
 set -lx ip 0.0.0.0
 set -lx port 80
