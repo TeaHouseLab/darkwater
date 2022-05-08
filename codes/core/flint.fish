@@ -11,5 +11,5 @@ function flint
     end
     logger 0 "+ Main thread started"
     socat tcp-listen:$port,bind=$ip,reuseaddr,fork,end-close EXEC:"fish $webroot/logicpipe.fish $ip $port $index $webroot $logcat" 
-    logger 0 " - Main thread stopped"
+    logger 0 "- Main thread stopped"
 end

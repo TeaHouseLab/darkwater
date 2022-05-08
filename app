@@ -217,10 +217,10 @@ function flint
     end
     logger 0 "+ Main thread started"
     socat tcp-listen:$port,bind=$ip,reuseaddr,fork,end-close EXEC:"fish $webroot/logicpipe.fish $ip $port $index $webroot $logcat" 
-    logger 0 " - Main thread stopped"
+    logger 0 "- Main thread stopped"
 end
 
-echo Build_Time_UTC=2022-05-08_10:19:25
+echo Build_Time_UTC=2022-05-08_12:02:55
 set -lx prefix [darkwater]
 set -lx ip 0.0.0.0
 set -lx port 80
