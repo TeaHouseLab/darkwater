@@ -8,8 +8,10 @@ function logicpipe
     set request_path (echo $request | awk -F'[ ]' '{print $2}')
     set 200_head "HTTP/1.1 200 OK
 Content-Type:*/*; charset=UTF-8\r\n"
-    set 403_head "HTTP/1.1 403 Forbidden\r\n"
-    set 404_head "HTTP/1.1 404 Not Found\r\n"
+    set 403_head "HTTP/1.1 403 Forbidden
+Content-Type:*/*; charset=UTF-8\r\n"
+    set 404_head "HTTP/1.1 404 Not Found
+Content-Type:*/*; charset=UTF-8\r\n"
     if test -e $webroot$request_path
         if test "$request_path" = /
             set request_path "/$index"
