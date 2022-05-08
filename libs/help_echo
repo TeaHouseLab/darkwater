@@ -7,7 +7,9 @@ function help_echo
     v/version: Show version
 
 Args
-(./)app [-i/--ip, -p/--port, -m/--index, -d/--webroot, -l/--logcat]
+(./)app [-c/--config, -i/--ip, -p/--port, -m/--index, -d/--webroot, -l/--logcat]
+
+    -c/--config: Specify the configure file
 
     -i/--ip: Specify the ip to listen
 

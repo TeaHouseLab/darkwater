@@ -90,7 +90,9 @@ function help_echo
     v/version: Show version
 
 Args
-(./)app [-i/--ip, -p/--port, -m/--index, -d/--webroot, -l/--logcat]
+(./)app [-c/--config, -i/--ip, -p/--port, -m/--index, -d/--webroot, -l/--logcat]
+
+    -c/--config: Specify the configure file
 
     -i/--ip: Specify the ip to listen
 
@@ -164,11 +166,26 @@ function logicpipe
     set logcat $argv[5]
     set request_path (echo $request | awk -F'[ ]' '{print $2}')
     if test -e $webroot$request_path
-    fish $webroot$request_path
+        if test "$request_path" = /
+            set request_path "/$index"
+        end
+        if head -n2 $webroot$request_path | grep -qs '#!/'
+            fish $webroot$request_path
+        else
+            echo -e "HTTP/1.1 200 OK\n\n $(cat $webroot$request_path)"
+        end
     else
-        
+        echo -e "HTTP/1.1 404\n
+<html><head>
+<title>404 Not Found</title>
+</head><body>
+<h1>NMSL</h1>
+<p>The requested URL $request_path was not found on this server.</p>
+<p>DarkWater API server Quicksand@build2</p>
+</body></html>"
     end
 end
+
 function flint
     logger 0 "+ Initializing the main thread"
     if test -d $webroot
@@ -181,25 +198,35 @@ function flint
         logger 2 "Main thread ready to go, logicpipe loaded"
     end
     logger 0 "+ Main thread started"
-    socat EXEC:"fish $webroot/logicpipe.fish $ip $port $index $webroot $logcat" tcp-listen:$port,bind=$ip,reuseaddr,pktinfo,fork,end-close
+    socat tcp-listen:$port,bind=$ip,reuseaddr,pktinfo,fork,end-close EXEC:"fish $webroot/logicpipe.fish $ip $port $index $webroot $logcat" 
     logger 0 " - Main thread stopped"
 end
 
-echo Build_Time_UTC=2022-05-08_03:37:14
+echo Build_Time_UTC=2022-05-08_04:12:21
 set -lx prefix [darkwater]
 set -lx ip 0.0.0.0
 set -lx port 80
 set -lx index "index.fish"
-set -lx webroot "/var/www/fish"
+set -lx webroot /var/www/fish
 set -lx logcat info
 set -lx path (echo -e "$(pwd)/$(status --current-filename)")
+set -lx config "/etc/centerlinux/conf.d/darkwater.conf"
 checkdependence curl socat sudo
 ctconfig_init
-set ip (configure ip /etc/centerlinux/conf.d/darkwater.conf)
-set port (configure port /etc/centerlinux/conf.d/darkwater.conf)
-set index (configure index /etc/centerlinux/conf.d/darkwater.conf)
-set webroot (configure webroot /etc/centerlinux/conf.d/darkwater.conf)
-set logcat (configure logcat /etc/centerlinux/conf.d/darkwater.conf)
+argparse -i -n $prefix 'c/config=' -- $argv
+if set -q _flag_config
+    set config $_flag_config
+end
+if test -e "$config"
+else
+    logger 4 "Can`t find the configure file, abort"
+    exit
+end
+set ip (configure ip $config)
+set port (configure port $config)
+set index (configure index $config)
+set webroot (configure webroot $config)
+set logcat (configure logcat $config)
 argparse -i -n $prefix 'i/ip=' 'p/port=' 'm/index=' 'd/webroot=' 'l/logcat=' -- $argv
 if set -q _flag_ip
     set logcat $_flag_ip
@@ -216,7 +243,7 @@ end
 if set -q _flag_logcat
     set logcat $_flag_logcat
 end
-if test "$logcat" = "debug"
+if test "$logcat" = debug
     logger 2 "set ip.darkwater -> $ip"
     logger 2 "set port.darkwater -> $port"
     logger 2 "set index.darkwater -> $index"
