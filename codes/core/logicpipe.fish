@@ -43,12 +43,16 @@ Content-Type:*/*; charset=UTF-8\r\n"
     else
         if test -e $webroot$request_path
             set head $403
-            set request_path /403.fish
+            if test -e $webroot/403.fish
+                set request_path /403.fish
+            end
             dispatcher
             exit
         else
             set head $404
-            set request_path /404.fish
+            if test -e $webroot/404.fish
+                set request_path /404.fish
+            end
             dispatcher
             exit
         end
