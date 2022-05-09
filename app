@@ -159,47 +159,57 @@ end
 
 function logicpipe
     read request
+    set prefix [logicpipe]
     set ip $argv[1]
     set port $argv[2]
     set index $argv[3]
     set webroot $argv[4]
     set logcat $argv[5]
     set request_path (echo $request | awk -F'[ ]' '{print $2}')
-    set 200_head "HTTP/1.1 200 OK
+    set date (date +"%Y/%m/%d|%H:%M:%S")
+    set 200 "HTTP/1.1 200 OK
 Content-Type:*/*; charset=UTF-8\r\n"
-    set 403_head "HTTP/1.1 403 Forbidden
+    set 403 "HTTP/1.1 403 Forbidden
 Content-Type:*/*; charset=UTF-8\r\n"
-    set 404_head "HTTP/1.1 404 Not Found
+    set 404 "HTTP/1.1 404 Not Found
 Content-Type:*/*; charset=UTF-8\r\n"
-    if test -e $webroot$request_path
-        if test "$request_path" = /
-            set request_path "/$index"
-        end
-        if test "$request_path" = /logicpipe.fish
-            echo -e $403_head
-            if test -e $webroot/403.fish
-                fish $webroot/403.fish
-            end
+    function dispatcher
+        if head -n2 $webroot$request_path | grep -qs '#!/'
+            echo -e $head
+            fish $webroot$request_path
         else
-            if [ -r $webroot$request_path ]
-                if head -n2 $webroot$request_path | grep -qs '#!/'
-                    echo -e $200_head
-                    fish $webroot$request_path
-                else
-                    echo -e $200_head
-                    cat $webroot$request_path
-                end
-            else
-                echo -e $403_head
-                if test -e $webroot/403.fish
-                    fish $webroot/403.fish
-                end
-            end
+            echo -e $head
+            cat $webroot$request_path
         end
+    end
+    #rule set
+    #redirect index
+    if test "$request_path" = /; or test -z "$request_path"
+        set request_path /$index
+    end
+    #security patch
+    if test "$request_path" = /logicpipe.fish; or grep -qs "../" "$request_path"
+        set head $403
+        set request_path /403.fish
+        dispatcher
+        exit
+    end
+    #base logic level
+    if test -r $webroot$request_path
+        set head $200
+        dispatcher
+        exit
     else
-        echo -e $404_head
-        if test -e $webroot/404.fish
-            fish $webroot/404.fish
+        if test -e $webroot$request_path
+            set head $403
+            set request_path /403.fish
+            dispatcher
+            exit
+        else
+            set head $404
+            set request_path /404.fish
+            dispatcher
+            exit
         end
     end
 end
@@ -220,7 +230,7 @@ function flint
     logger 0 "- Main thread stopped"
 end
 
-echo Build_Time_UTC=2022-05-08_12:02:55
+echo Build_Time_UTC=2022-05-09_01:38:43
 set -lx prefix [darkwater]
 set -lx ip 0.0.0.0
 set -lx port 80
@@ -271,7 +281,7 @@ switch $argv[1]
     case s serve
         flint
     case v version
-        logger 0 "Quicksand@build2"
+        logger 0 "Quicksand@build3"
     case loop
         logicpipe
     case h help '*'

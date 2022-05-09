@@ -48,7 +48,7 @@ switch $argv[1]
     case s serve
         flint
     case v version
-        logger 0 "Quicksand@build2"
+        logger 0 "Quicksand@build3"
     case loop
         logicpipe
     case h help '*'
