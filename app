@@ -235,7 +235,7 @@ function flint
     socat tcp-listen:$port,bind=$ip,reuseaddr,fork,end-close EXEC:"fish $logicpipe $ip $port $index $webroot $logcat"
 end
 
-echo Build_Time_UTC=2022-05-10_03:35:30
+echo Build_Time_UTC=2022-05-10_04:03:33
 set -lx prefix [darkwater]
 set -lx ip 0.0.0.0
 set -lx port 80
@@ -261,10 +261,10 @@ set webroot (configure webroot $config)
 set logcat (configure logcat $config)
 argparse -i -n $prefix 'i/ip=' 'p/port=' 'm/index=' 'd/webroot=' 'l/logcat=' -- $argv
 if set -q _flag_ip
-    set logcat $_flag_ip
+    set ip $_flag_ip
 end
 if set -q _flag_port
-    set logcat $_flag_port
+    set port $_flag_port
 end
 if set -q _flag_index
     set index $_flag_index

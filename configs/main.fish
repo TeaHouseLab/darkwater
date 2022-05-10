@@ -23,10 +23,10 @@ set webroot (configure webroot $config)
 set logcat (configure logcat $config)
 argparse -i -n $prefix 'i/ip=' 'p/port=' 'm/index=' 'd/webroot=' 'l/logcat=' -- $argv
 if set -q _flag_ip
-    set logcat $_flag_ip
+    set ip $_flag_ip
 end
 if set -q _flag_port
-    set logcat $_flag_port
+    set port $_flag_port
 end
 if set -q _flag_index
     set index $_flag_index
