@@ -222,16 +222,20 @@ function flint
     else
         mkdir -p $webroot
     end
-    set logicpipe (sed -n '/^function logicpipe/,/^end/p' $path)
-    if test "$logcat" = "debug"
+    set logicpipe (mktemp)
+    sed -n '/^function logicpipe/,/^end/p' $path | sed '1d; $d' | tee "$logicpipe" &>/dev/null
+    chmod +x "$logicpipe"
+    if test "$logcat" = debug
         logger 2 "Main thread ready to go, logicpipe loaded"
     end
     logger 0 "+ Main thread started"
-    socat tcp-listen:$port,bind=$ip,reuseaddr,fork,end-close EXEC:"echo -e $logicpipe | source && logicpipe $ip $port $index $webroot $logcat" 
-    logger 0 "- Main thread stopped"
+    trap "logger 0 - Main thread stopped && rm $logicpipe" KILL
+    trap "logger 0 - Main thread stopped && rm $logicpipe" INT
+    trap "logger 0 - Main thread stopped && rm $logicpipe" EXIT
+    socat tcp-listen:$port,bind=$ip,reuseaddr,fork,end-close EXEC:"fish $logicpipe $ip $port $index $webroot $logcat"
 end
 
-echo Build_Time_UTC=2022-05-10_02:10:04
+echo Build_Time_UTC=2022-05-10_03:35:30
 set -lx prefix [darkwater]
 set -lx ip 0.0.0.0
 set -lx port 80
@@ -284,8 +288,6 @@ switch $argv[1]
         ctconfig_init
     case v version
         logger 0 "Quicksand@build4"
-    case loop
-        logicpipe
     case h help '*'
         help_echo
 end

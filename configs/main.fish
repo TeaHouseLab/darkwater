@@ -50,8 +50,6 @@ switch $argv[1]
         ctconfig_init
     case v version
         logger 0 "Quicksand@build4"
-    case loop
-        logicpipe
     case h help '*'
         help_echo
 end
