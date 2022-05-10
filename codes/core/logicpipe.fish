@@ -29,7 +29,7 @@ Content-Type:*/*; charset=UTF-8\r\n"
         set request_path /$index
     end
     #security patch
-    if test "$request_path" = /logicpipe.fish; or grep -qs "../" "$request_path"
+    if grep -qs "../" "$request_path"
         set head $403
         set request_path /403.fish
         dispatcher

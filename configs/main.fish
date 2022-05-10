@@ -47,8 +47,10 @@ end
 switch $argv[1]
     case s serve
         flint
+    case c config
+        ctconfig_init
     case v version
-        logger 0 "Quicksand@build3"
+        logger 0 "Quicksand@build4"
     case loop
         logicpipe
     case h help '*'

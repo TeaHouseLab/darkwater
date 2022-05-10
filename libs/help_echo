@@ -1,8 +1,10 @@
 function help_echo
  echo '
-(./)app [s/serve, v/version]
+(./)app [s/serve,c/config , v/version]
 
     s/serve: Start serving webpage
+
+    c/config: Generate a new configure file at ./darkwater
 
     v/version: Show version
 

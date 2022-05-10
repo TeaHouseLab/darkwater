@@ -83,9 +83,11 @@ end
 
 function help_echo
  echo '
-(./)app [s/serve, v/version]
+(./)app [s/serve,c/config , v/version]
 
     s/serve: Start serving webpage
+
+    c/config: Generate a new configure file at ./darkwater
 
     v/version: Show version
 
@@ -142,19 +144,13 @@ function configure
     sed -n "/$argv[1]=/"p "$argv[2]" | sed "s/$argv[1]=//g"
 end
 function ctconfig_init
-    if test -e /etc/centerlinux/conf.d/darkwater.conf
-    else
-        logger 3 "Detected First Launching,We need your password to create the config file"
-        if test -d /etc/centerlinux/conf.d/
-        else
-            sudo mkdir -p /etc/centerlinux/conf.d/
-        end
+logger 0 '* Generating the configure file to ./darkwater.conf'
         echo "ip=0.0.0.0
 port=80
 index=index.fish
 webroot=/var/www/darkwater
-logcat=info" | sudo tee /etc/centerlinux/conf.d/darkwater.conf &>/dev/null
-    end
+logcat=info" > darkwater.conf
+logger 0 '+ Configure file generated to ./darkwater.conf'
 end
 
 function logicpipe
@@ -188,7 +184,7 @@ Content-Type:*/*; charset=UTF-8\r\n"
         set request_path /$index
     end
     #security patch
-    if test "$request_path" = /logicpipe.fish; or grep -qs "../" "$request_path"
+    if grep -qs "../" "$request_path"
         set head $403
         set request_path /403.fish
         dispatcher
@@ -202,12 +198,16 @@ Content-Type:*/*; charset=UTF-8\r\n"
     else
         if test -e $webroot$request_path
             set head $403
-            set request_path /403.fish
+            if test -e $webroot/403.fish
+                set request_path /403.fish
+            end
             dispatcher
             exit
         else
             set head $404
-            set request_path /404.fish
+            if test -e $webroot/404.fish
+                set request_path /404.fish
+            end
             dispatcher
             exit
         end
@@ -220,17 +220,16 @@ function flint
     else
         mkdir -p $webroot
     end
-    sed -n '/^function logicpipe/,/^end/p' $path | sed '1d; $d' | sudo tee $webroot/logicpipe.fish &>/dev/null
-    sudo chmod +x $webroot/logicpipe.fish
+    set logicpipe (sed -n '/^function logicpipe/,/^end/p' $path)
     if test "$logcat" = "debug"
         logger 2 "Main thread ready to go, logicpipe loaded"
     end
     logger 0 "+ Main thread started"
-    socat tcp-listen:$port,bind=$ip,reuseaddr,fork,end-close EXEC:"fish $webroot/logicpipe.fish $ip $port $index $webroot $logcat" 
+    socat tcp-listen:$port,bind=$ip,reuseaddr,fork,end-close EXEC:"echo -e $logicpipe | source && logicpipe $ip $port $index $webroot $logcat" 
     logger 0 "- Main thread stopped"
 end
 
-echo Build_Time_UTC=2022-05-09_03:56:24
+echo Build_Time_UTC=2022-05-10_01:56:20
 set -lx prefix [darkwater]
 set -lx ip 0.0.0.0
 set -lx port 80
@@ -280,8 +279,10 @@ end
 switch $argv[1]
     case s serve
         flint
+    case c config
+        ctconfig_init
     case v version
-        logger 0 "Quicksand@build3"
+        logger 0 "Quicksand@build4"
     case loop
         logicpipe
     case h help '*'
