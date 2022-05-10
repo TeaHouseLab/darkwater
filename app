@@ -184,9 +184,11 @@ Content-Type:*/*; charset=UTF-8\r\n"
         set request_path /$index
     end
     #security patch
-    if grep -qs "../" "$request_path"
+    if grep -qs "../" "$request_path"; or test -d $webroot$request_path
         set head $403
-        set request_path /403.fish
+        if test -e $webroot/403.fish
+            set request_path /403.fish
+        end
         dispatcher
         exit
     end
@@ -229,7 +231,7 @@ function flint
     logger 0 "- Main thread stopped"
 end
 
-echo Build_Time_UTC=2022-05-10_01:56:20
+echo Build_Time_UTC=2022-05-10_02:02:52
 set -lx prefix [darkwater]
 set -lx ip 0.0.0.0
 set -lx port 80
