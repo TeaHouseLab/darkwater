@@ -155,7 +155,9 @@ logger 0 '* Generating the configure file to ./darkwater.conf'
 port=80
 index=index.fish
 webroot=/var/www/darkwater
-logcat=info" > darkwater.conf
+logcat=info
+cert=/etc/centerlinux/conf.d/server.crt
+key=/etc/centerlinux/conf.d/server.key" > darkwater.conf
 logger 0 '+ Configure file generated to ./darkwater.conf'
 end
 
@@ -240,13 +242,13 @@ function flint
     trap "logger 0 - Main thread stopped && rm $logicpipe" EXIT
     switch $argv[1]
         case ssl
-            socat openssl-listen:$port,cert=$cert,key=$key,reuseaddr,fork,end-close EXEC:"fish $logicpipe $ip $port $index $webroot $logcat"
+            socat openssl-listen:$port,bind=$ip,cert=$cert,key=$key,verify=0,reuseaddr,fork,end-close EXEC:"fish $logicpipe $ip $port $index $webroot $logcat"
         case '*'
             socat tcp-listen:$port,bind=$ip,reuseaddr,fork,end-close EXEC:"fish $logicpipe $ip $port $index $webroot $logcat"
     end
 end
 
-echo Build_Time_UTC=2022-05-10_04:28:46
+echo Build_Time_UTC=2022-05-10_04:39:45
 set -lx prefix [darkwater]
 set -lx ip 0.0.0.0
 set -lx port 80

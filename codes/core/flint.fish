@@ -16,7 +16,7 @@ function flint
     trap "logger 0 - Main thread stopped && rm $logicpipe" EXIT
     switch $argv[1]
         case ssl
-            socat openssl-listen:$port,bind=$ip,cert=$cert,key=$key,reuseaddr,fork,end-close EXEC:"fish $logicpipe $ip $port $index $webroot $logcat"
+            socat openssl-listen:$port,bind=$ip,cert=$cert,key=$key,verify=0,reuseaddr,fork,end-close EXEC:"fish $logicpipe $ip $port $index $webroot $logcat"
         case '*'
             socat tcp-listen:$port,bind=$ip,reuseaddr,fork,end-close EXEC:"fish $logicpipe $ip $port $index $webroot $logcat"
     end
