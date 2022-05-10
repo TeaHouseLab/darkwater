@@ -231,7 +231,7 @@ function flint
     logger 0 "- Main thread stopped"
 end
 
-echo Build_Time_UTC=2022-05-10_02:02:52
+echo Build_Time_UTC=2022-05-10_02:10:04
 set -lx prefix [darkwater]
 set -lx ip 0.0.0.0
 set -lx port 80
@@ -241,7 +241,6 @@ set -lx logcat info
 set -lx path (status --current-filename)
 set -lx config "/etc/centerlinux/conf.d/darkwater.conf"
 checkdependence curl socat sudo
-ctconfig_init
 argparse -i -n $prefix 'c/config=' -- $argv
 if set -q _flag_config
     set config $_flag_config

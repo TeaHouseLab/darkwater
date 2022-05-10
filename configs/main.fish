@@ -7,7 +7,6 @@ set -lx logcat info
 set -lx path (status --current-filename)
 set -lx config "/etc/centerlinux/conf.d/darkwater.conf"
 checkdependence curl socat sudo
-ctconfig_init
 argparse -i -n $prefix 'c/config=' -- $argv
 if set -q _flag_config
     set config $_flag_config
