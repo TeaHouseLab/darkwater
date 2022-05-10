@@ -4,12 +4,14 @@ function help_echo
 
     s/serve: Start serving webpage
 
+    ss/sserve: Start serving webpage through https
+
     c/config: Generate a new configure file at ./darkwater
 
     v/version: Show version
 
 Args
-(./)app [-c/--config, -i/--ip, -p/--port, -m/--index, -d/--webroot, -l/--logcat]
+(./)app [-c/--config, -i/--ip, -p/--port, -m/--index, -d/--webroot, -l/--logcat, -v/--cert, -k/--key]
 
     -c/--config: Specify the configure file
 
@@ -22,5 +24,9 @@ Args
     -d/--webroot: Specify web root directory, by default it`s /var/www/fish
 
     -l/--logcat: Specify log level, available{info, debug}
+
+    -v/--cert: Specify cert (only works in ssl mode)
+
+    -k/--key: Specify key (only works in ssl mode)
 '
 end

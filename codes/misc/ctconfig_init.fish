@@ -4,6 +4,8 @@ logger 0 '* Generating the configure file to ./darkwater.conf'
 port=80
 index=index.fish
 webroot=/var/www/darkwater
-logcat=info" > darkwater.conf
+logcat=info
+cert=/etc/centerlinux/conf.d/server.crt
+key=/etc/centerlinux/conf.d/server.key" > darkwater.conf
 logger 0 '+ Configure file generated to ./darkwater.conf'
 end

@@ -2,8 +2,10 @@ set -lx prefix [darkwater]
 set -lx ip 0.0.0.0
 set -lx port 80
 set -lx index "index.fish"
-set -lx webroot /var/www/fish
+set -lx webroot /var/www/darkwater
 set -lx logcat info
+set -lx cert /etc/centerlinux/conf.d/server.crt
+set -lx key /etc/centerlinux/conf.d/server.key
 set -lx path (status --current-filename)
 set -lx config "/etc/centerlinux/conf.d/darkwater.conf"
 checkdependence curl socat sudo
@@ -21,7 +23,9 @@ set port (configure port $config)
 set index (configure index $config)
 set webroot (configure webroot $config)
 set logcat (configure logcat $config)
-argparse -i -n $prefix 'i/ip=' 'p/port=' 'm/index=' 'd/webroot=' 'l/logcat=' -- $argv
+set cert (configure cert $config)
+set key (configure key $config)
+argparse -i -n $prefix 'i/ip=' 'p/port=' 'm/index=' 'd/webroot=' 'l/logcat=' 'v/cert=' 'k/key=' -- $argv
 if set -q _flag_ip
     set ip $_flag_ip
 end
@@ -37,19 +41,29 @@ end
 if set -q _flag_logcat
     set logcat $_flag_logcat
 end
+if set -q _flag_cert
+    set cert $_flag_cert
+end
+if set -q _flag_key
+    set key $_flag_key
+end
 if test "$logcat" = debug
     logger 2 "set ip.darkwater -> $ip"
     logger 2 "set port.darkwater -> $port"
     logger 2 "set index.darkwater -> $index"
     logger 2 "set webroot.darkwater -> $webroot"
+    logger 2 "set cert.darkwater -> $cert"
+    logger 2 "set key.darkwater -> $key"
 end
 switch $argv[1]
     case s serve
         flint
+    case ss sserve
+        flint ssl 
     case c config
         ctconfig_init
     case v version
-        logger 0 "Quicksand@build4"
+        logger 0 "Quicksand@build5"
     case h help '*'
         help_echo
 end
