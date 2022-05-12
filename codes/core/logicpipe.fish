@@ -26,11 +26,16 @@ Content-Type:*/*; charset=UTF-8"
             echo -e "$head\r\n"
             fish $webroot$request_path
         else
-            if test "$request_etag" = "$etag"
-                echo -e "$302"
-            else
-                echo -e "$head
+            if test -r $webroot$request_path; and test -f $webroot$request_path
+                if test "$request_etag" = "$etag"
+                    echo -e "$302"
+                else
+                    echo -e "$head
 Etag: $etag\r\n"
+                    cat $webroot$request_path
+                end
+            else
+                echo -e "$head\r\n"
                 cat $webroot$request_path
             end
         end
@@ -45,6 +50,8 @@ Etag: $etag\r\n"
         set head $403
         if test -e $webroot/403.fish
             set request_path /403.fish
+        else
+            set request_path ""
         end
         dispatcher
         exit
@@ -60,6 +67,8 @@ Etag: $etag\r\n"
             set head $403
             if test -e $webroot/403.fish
                 set request_path /403.fish
+            else
+                set request_path ""
             end
             dispatcher
             exit
@@ -67,6 +76,8 @@ Etag: $etag\r\n"
             set head $404
             if test -e $webroot/404.fish
                 set request_path /404.fish
+            else
+                set request_path ""
             end
             dispatcher
             exit
