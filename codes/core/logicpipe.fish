@@ -32,12 +32,12 @@ Content-Type:*/*; charset=UTF-8"
                         echo -e "$head\r\n"
                         cat $webroot$request_path
                     else
-                        echo -e "$302"
+                        echo -e "$302\r\n"
                     end
                 else
                     echo -e "$head
 Etag: $etag
-Cache-Control: max-age=3600"
+Cache-Control: max-age=3600\r\n"
                     cat $webroot$request_path
                 end
             else
