@@ -191,10 +191,16 @@ Content-Type:*/*; charset=UTF-8"
         else
             if test -r $webroot$request_path; and test -f $webroot$request_path
                 if test "$request_etag" = "$etag"
-                    echo -e "$302"
+                    if file $webroot$request_path | grep -qs text
+                        echo -e "$head\r\n"
+                        cat $webroot$request_path
+                    else
+                        echo -e "$302"
+                    end
                 else
                     echo -e "$head
-Etag: $etag\r\n"
+Etag: $etag
+Cache-Control: max-age=3600"
                     cat $webroot$request_path
                 end
             else
@@ -272,7 +278,7 @@ function flint
     end
 end
 
-echo Build_Time_UTC=2022-05-12_11:08:20
+echo Build_Time_UTC=2022-05-12_11:26:31
 set -lx prefix [darkwater]
 set -lx ip 0.0.0.0
 set -lx port 80
@@ -338,7 +344,7 @@ switch $argv[1]
     case c config
         ctconfig_init
     case v version
-        logger 0 "Quicksand@build5"
+        logger 0 "Quicksand@build6"
     case h help '*'
         help_echo
 end

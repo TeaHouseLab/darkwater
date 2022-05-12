@@ -63,7 +63,7 @@ switch $argv[1]
     case c config
         ctconfig_init
     case v version
-        logger 0 "Quicksand@build5"
+        logger 0 "Quicksand@build6"
     case h help '*'
         help_echo
 end

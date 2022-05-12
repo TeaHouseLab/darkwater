@@ -28,10 +28,16 @@ Content-Type:*/*; charset=UTF-8"
         else
             if test -r $webroot$request_path; and test -f $webroot$request_path
                 if test "$request_etag" = "$etag"
-                    echo -e "$302"
+                    if file $webroot$request_path | grep -qs text
+                        echo -e "$head\r\n"
+                        cat $webroot$request_path
+                    else
+                        echo -e "$302"
+                    end
                 else
                     echo -e "$head
-Etag: $etag\r\n"
+Etag: $etag
+Cache-Control: max-age=3600"
                     cat $webroot$request_path
                 end
             else
