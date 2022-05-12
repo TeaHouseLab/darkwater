@@ -163,13 +163,9 @@ end
 
 function logicpipe
     while read request_raw
-        if echo $request_raw | grep -qs GET
-            set request_path (echo $request_raw | awk -F'[ ]' '{print $2}')
-        end
-        if echo $request_raw | grep -qs If-None-Match
-            set request_etag (echo $request_raw | awk -F'[ ]' '{print $2}')
-        end
-        if echo $request_raw | grep -qs '\r'
+        set request_raw_process (echo $request_raw | tr '\r' ' ' | tr '$' '-')
+        set request "$request $request_raw_process"
+        if test "$request_raw" = \r
             break
         end
     end
@@ -179,11 +175,13 @@ function logicpipe
     set index $argv[3]
     set webroot $argv[4]
     set logcat $argv[5]
+    set request_path (echo $request | tr ' ' '\n' | awk '/GET/{getline; print}')
+    set request_etag (echo $request | tr ' ' '\n' | awk '/If-None-Match:/{getline; print}')
     set 200 "HTTP/1.1 200 OK
 Content-Type:*/*; charset=UTF-8"
     set 302 "HTTP/1.1 302 Found"
     set 403 "HTTP/1.1 403 Forbidden
-Content-Type:*/*; charset=UTF-8s"
+Content-Type:*/*; charset=UTF-8"
     set 404 "HTTP/1.1 404 Not Found
 Content-Type:*/*; charset=UTF-8"
     function dispatcher
@@ -210,8 +208,6 @@ Etag: $etag\r\n"
         set head $403
         if test -e $webroot/403.fish
             set request_path /403.fish
-        else
-            set -e request_path
         end
         dispatcher
         exit
@@ -227,8 +223,6 @@ Etag: $etag\r\n"
             set head $403
             if test -e $webroot/403.fish
                 set request_path /403.fish
-            else
-                set -e request_path
             end
             dispatcher
             exit
@@ -236,8 +230,6 @@ Etag: $etag\r\n"
             set head $404
             if test -e $webroot/404.fish
                 set request_path /404.fish
-            else
-                set -e request_path
             end
             dispatcher
             exit
@@ -269,7 +261,7 @@ function flint
     end
 end
 
-echo Build_Time_UTC=2022-05-12_05:24:00
+echo Build_Time_UTC=2022-05-12_10:07:55
 set -lx prefix [darkwater]
 set -lx ip 0.0.0.0
 set -lx port 80
