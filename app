@@ -185,7 +185,7 @@ Content-Type:*/*; charset=UTF-8"
     set 404 "HTTP/1.1 404 Not Found
 Content-Type:*/*; charset=UTF-8"
     function dispatcher
-        if head -n2 $webroot$request_path | grep -qs '#!/'
+        if dd if=$webroot$request_path bs=35 count=1 status=none | grep -qs '#!/'
             echo -e "$head\r\n"
             fish $webroot$request_path
         else
@@ -294,7 +294,7 @@ function flint
     end
 end
 
-echo Build_Time_UTC=2022-05-28_11:23:42
+echo Build_Time_UTC=2022-05-28_11:58:35
 set -lx prefix [darkwater]
 set -lx ip 0.0.0.0
 set -lx port 80
