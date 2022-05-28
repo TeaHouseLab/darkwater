@@ -29,7 +29,8 @@ Content-Type:*/*; charset=UTF-8"
             if test -r $webroot$request_path; and test -f $webroot$request_path
                 if test "$request_etag" = "$etag"
                     if file $webroot$request_path | grep -qs text
-                        echo -e "$head\r\n"
+                        echo -e "$head
+Content-Length: $size\r\n"
                         cat $webroot$request_path
                     else
                         echo -e "$302\r\n"
@@ -37,7 +38,8 @@ Content-Type:*/*; charset=UTF-8"
                 else
                     echo -e "$head
 Etag: $etag
-Cache-Control: max-age=3600\r\n"
+Cache-Control: max-age=31536000
+Content-Length: $size\r\n"
                     cat $webroot$request_path
                 end
             else
@@ -65,6 +67,7 @@ Cache-Control: max-age=3600\r\n"
     #base logic level
     if test -r $webroot$request_path
         set etag (stat $webroot$request_path -c '%Y')
+        set size (wc -c < $webroot$request_path)
         set head $200
         dispatcher
         exit
