@@ -163,7 +163,7 @@ end
 
 function logicpipe
     while read request_raw
-        set request_raw_process (echo $request_raw | tr '\r' ' ' | tr '$' '-')
+        set request_raw_process (echo $request_raw | tr '\r' ' ')
         set request "$request $request_raw_process"
         if test "$request_raw" = \r
             break
@@ -185,16 +185,16 @@ Content-Type:*/*; charset=UTF-8"
     set 404 "HTTP/1.1 404 Not Found
 Content-Type:*/*; charset=UTF-8"
     function dispatcher
-        if dd if=$webroot$request_path bs=35 count=1 status=none | grep -qs '#!/'
+        if dd if="$webroot$request_path" bs=35 count=1 status=none | grep -qs '#!/'
             echo -e "$head\r\n"
-            fish $webroot$request_path
+            fish "$webroot$request_path"
         else
-            if test -r $webroot$request_path; and test -f $webroot$request_path
+            if test -r "$webroot$request_path"; and test -f "$webroot$request_path"
                 if test "$request_etag" = "$etag"
-                    if file $webroot$request_path | grep -qs text
+                    if file "$webroot$request_path" | grep -qs text
                         echo -e "$head
 Content-Length: $size\r\n"
-                        cat $webroot$request_path
+                        cat "$webroot$request_path"
                     else
                         echo -e "$302\r\n"
                     end
@@ -203,11 +203,11 @@ Content-Length: $size\r\n"
 Etag: $etag
 Cache-Control: max-age=31536000
 Content-Length: $size\r\n"
-                    cat $webroot$request_path
+                    cat "$webroot$request_path"
                 end
             else
                 echo -e "$head\r\n"
-                cat $webroot$request_path
+                cat "$webroot$request_path"
             end
         end
     end
@@ -217,7 +217,7 @@ Content-Length: $size\r\n"
         set request_path /$index
     end
     #security patch
-    if grep -qs "../" "$request_path"; or test -d $webroot$request_path
+    if grep -qs "../" "$request_path"; or test -d "$webroot$request_path"
         set head $403
         if test -e $webroot/403.fish
             set request_path /403.fish
@@ -228,14 +228,14 @@ Content-Length: $size\r\n"
         exit
     end
     #base logic level
-    if test -r $webroot$request_path
-        set etag (stat $webroot$request_path -c '%Y')
-        set size (wc -c < $webroot$request_path)
+    if test -r "$webroot$request_path"
+        set etag (stat "$webroot$request_path" -c '%Y')
+        set size (wc -c < "$webroot$request_path")
         set head $200
         dispatcher
         exit
     else
-        if test -e $webroot$request_path
+        if test -e "$webroot$request_path"
             set head $403
             if test -e $webroot/403.fish
                 set request_path /403.fish
@@ -294,7 +294,7 @@ function flint
     end
 end
 
-echo Build_Time_UTC=2022-05-28_11:58:35
+echo Build_Time_UTC=2022-05-28_12:31:19
 set -lx prefix [darkwater]
 set -lx ip 0.0.0.0
 set -lx port 80
