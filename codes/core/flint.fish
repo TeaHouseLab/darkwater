@@ -1,4 +1,17 @@
 function flint
+    if test -e "$config"
+    else
+        logger 4 "Can`t find the configure file, abort"
+        exit
+    end
+    if test "$logcat" = debug
+        logger 2 "set ip.darkwater -> $ip"
+        logger 2 "set port.darkwater -> $port"
+        logger 2 "set index.darkwater -> $index"
+        logger 2 "set webroot.darkwater -> $webroot"
+        logger 2 "set cert.darkwater -> $cert"
+        logger 2 "set key.darkwater -> $key"
+    end
     logger 0 "+ Initializing the main thread"
     if test -d $webroot
     else

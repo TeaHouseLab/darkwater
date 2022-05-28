@@ -255,6 +255,19 @@ Cache-Control: max-age=3600\r\n"
 end
 
 function flint
+    if test -e "$config"
+    else
+        logger 4 "Can`t find the configure file, abort"
+        exit
+    end
+    if test "$logcat" = debug
+        logger 2 "set ip.darkwater -> $ip"
+        logger 2 "set port.darkwater -> $port"
+        logger 2 "set index.darkwater -> $index"
+        logger 2 "set webroot.darkwater -> $webroot"
+        logger 2 "set cert.darkwater -> $cert"
+        logger 2 "set key.darkwater -> $key"
+    end
     logger 0 "+ Initializing the main thread"
     if test -d $webroot
     else
@@ -278,7 +291,7 @@ function flint
     end
 end
 
-echo Build_Time_UTC=2022-05-12_11:47:21
+echo Build_Time_UTC=2022-05-28_11:01:57
 set -lx prefix [darkwater]
 set -lx ip 0.0.0.0
 set -lx port 80
@@ -293,11 +306,6 @@ checkdependence curl socat sudo
 argparse -i -n $prefix 'c/config=' -- $argv
 if set -q _flag_config
     set config $_flag_config
-end
-if test -e "$config"
-else
-    logger 4 "Can`t find the configure file, abort"
-    exit
 end
 set ip (configure ip $config)
 set port (configure port $config)
@@ -328,14 +336,6 @@ end
 if set -q _flag_key
     set key $_flag_key
 end
-if test "$logcat" = debug
-    logger 2 "set ip.darkwater -> $ip"
-    logger 2 "set port.darkwater -> $port"
-    logger 2 "set index.darkwater -> $index"
-    logger 2 "set webroot.darkwater -> $webroot"
-    logger 2 "set cert.darkwater -> $cert"
-    logger 2 "set key.darkwater -> $key"
-end
 switch $argv[1]
     case s serve
         flint
@@ -344,7 +344,7 @@ switch $argv[1]
     case c config
         ctconfig_init
     case v version
-        logger 0 "Quicksand@build6"
+        logger 0 "Quicksand@build7"
     case h help '*'
         help_echo
 end
