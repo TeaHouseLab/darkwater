@@ -2,6 +2,8 @@ Darkwater
 =========
 An interactive web server and api service
 
+<img src="https://github.com/TeaHouseLab/TeaHouseArtworks/blob/main/OtherProjects/darkwater.svg?raw=true" alt="logo" style="width:256px;"/>
+
 # How to use
 
 ./app h to read documents
