@@ -13,6 +13,11 @@ function logicpipe
     set webroot $argv[4]
     set logcat $argv[5]
     set request_path (echo $request | tr ' ' '\n' | awk '/GET/{getline; print}')
+    if echo $request_path | grep -qs "?"
+        set request_path (echo $request | tr ' ' '\n' | awk '/GET/{getline; print}' | awk -F "?" '{print $1}')
+        set request_argv (echo $request | tr ' ' '\n' | awk '/GET/{getline; print}' | awk -F "?" '{print $2}')
+        set arg true
+    end
     set request_etag (echo $request | tr ' ' '\n' | awk '/If-None-Match:/{getline; print}')
     set 200 "HTTP/1.1 200 OK
 Content-Type:*/*; charset=UTF-8"
@@ -23,8 +28,13 @@ Content-Type:*/*; charset=UTF-8"
 Content-Type:*/*; charset=UTF-8"
     function dispatcher
         if dd if="$webroot$request_path" bs=35 count=1 status=none | grep -qs '#!/'
-            echo -e "$head\r\n"
-            fish "$webroot$request_path"
+            if test "$arg" = true
+                echo -e "$head\r\n"
+                fish "$webroot$request_path" $request_argv
+            else
+                echo -e "$head\r\n"
+                fish "$webroot$request_path"
+            end
         else
             if test -r "$webroot$request_path"; and test -f "$webroot$request_path"
                 if test "$request_etag" = "$etag"
